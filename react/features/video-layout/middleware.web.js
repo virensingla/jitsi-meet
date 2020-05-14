@@ -14,6 +14,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
 
 import './middleware.any';
 
@@ -44,8 +45,18 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
         if (!action.participant.local) {
-            VideoLayout.addRemoteParticipantContainer(
-                getParticipantById(store.getState(), action.participant.id));
+            console.warn('action.participant: ', action.participant);
+            console.warn('action: ', action);
+            const localParticipant = getLocalParticipant(store.getState());
+            const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+            console.warn('viren: is moderator: ' + isModerator);
+            if(action.participant.role === 'moderator' || isModerator){
+                console.warn('viren: adding thumb');
+                VideoLayout.addRemoteParticipantContainer(
+                    getParticipantById(store.getState(), action.participant.id));
+            } else {
+                console.warn('viren: skipping participant');
+            }
         }
         break;
 
@@ -79,12 +90,16 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TRACK_ADDED:
         if (!action.track.local) {
+            console.warn('viren: track added', action.track);
+            console.warn('viren: track added jitsi', action.track.jitsiTrack);
             VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
         }
 
         break;
     case TRACK_REMOVED:
         if (!action.track.local) {
+            console.warn('viren: track removed', action.track);
+            console.warn('viren: track removed jitsi', action.track.jitsiTrack);
             VideoLayout.onRemoteStreamRemoved(action.track.jitsiTrack);
         }
 
