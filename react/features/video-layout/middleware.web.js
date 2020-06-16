@@ -19,6 +19,7 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
 import './middleware.any';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Middleware which intercepts actions and updates the legacy component
@@ -36,6 +37,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED:
+        console.warn('viren: joined', interfaceConfig);
         VideoLayout.mucJoined();
         break;
 
@@ -47,10 +49,21 @@ MiddlewareRegistry.register(store => next => action => {
         if (!action.participant.local) {
             console.warn('action.participant: ', action.participant);
             console.warn('action: ', action);
-            const localParticipant = getLocalParticipant(store.getState());
-            const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
-            console.warn('viren: is moderator: ' + isModerator);
-            if(action.participant.role === 'moderator' || isModerator){
+
+            let addUser = true;
+
+            if (interfaceConfig.SHOW_ONLY_MODERATOR === true) {
+                addUser = action.participant.role === 'moderator';
+
+                if (!addUser) {
+                    const localParticipant = getLocalParticipant(store.getState());
+                    addUser = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+                }
+            }
+
+            console.warn('viren: add user', addUser);
+
+            if (addUser) {
                 console.warn('viren: adding thumb');
                 VideoLayout.addRemoteParticipantContainer(
                     getParticipantById(store.getState(), action.participant.id));
@@ -90,16 +103,12 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TRACK_ADDED:
         if (!action.track.local) {
-            console.warn('viren: track added', action.track);
-            console.warn('viren: track added jitsi', action.track.jitsiTrack);
             VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
         }
 
         break;
     case TRACK_REMOVED:
         if (!action.track.local) {
-            console.warn('viren: track removed', action.track);
-            console.warn('viren: track removed jitsi', action.track.jitsiTrack);
             VideoLayout.onRemoteStreamRemoved(action.track.jitsiTrack);
         }
 

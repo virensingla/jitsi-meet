@@ -12,7 +12,7 @@ import {
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
-
+// declare var interfaceConfig: Object;
 /**
  * The middleware of the feature Filmstrip.
  */

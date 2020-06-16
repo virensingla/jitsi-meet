@@ -1259,6 +1259,16 @@ class Toolbox extends Component<Props, State> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
+                    {/* { buttonsLeft.indexOf('donotdisturb') !== -1
+                        && <div className='toolbar-button-with-badge'>
+                            <ToolbarButton
+                                accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                                icon = { IconRaisedHand }
+                                onClick = { this._onToolbarToggleRaiseHand }
+                                toggled = { _raisedHand }
+                                tooltip = { t('toolbar.raiseHand') } /> }
+                            <ChatCounter />
+                        </div>} */}
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />

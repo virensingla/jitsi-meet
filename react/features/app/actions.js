@@ -214,6 +214,10 @@ export function reloadWithStoredParams() {
         const windowLocation = window.location;
         const oldSearchString = windowLocation.search;
 
+        console.warn('viren: connection state', getState()['features/base/connection']);
+        console.warn('viren: windowLocation', windowLocation);
+        console.warn('viren: oldSearchString', oldSearchString);
+
         windowLocation.replace(locationURL.toString());
 
         if (window.self !== window.top
