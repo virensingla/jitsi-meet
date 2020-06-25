@@ -19,6 +19,7 @@ import {
     IconOpenInNew,
     IconPresentation,
     IconRaisedHand,
+    IconDoNotDisturb,
     IconRec,
     IconShareDesktop,
     IconShareVideo
@@ -85,6 +86,7 @@ import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import DoNotDisturbButton from './DoNotDisturbButton';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1186,6 +1188,7 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
         }
+        buttonsLeft.push('dnd');
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
@@ -1259,16 +1262,13 @@ class Toolbox extends Component<Props, State> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
-                    {/* { buttonsLeft.indexOf('donotdisturb') !== -1
-                        && <div className='toolbar-button-with-badge'>
-                            <ToolbarButton
-                                accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                                icon = { IconRaisedHand }
-                                onClick = { this._onToolbarToggleRaiseHand }
-                                toggled = { _raisedHand }
-                                tooltip = { t('toolbar.raiseHand') } /> }
-                            <ChatCounter />
-                        </div>} */}
+                    { buttonsLeft.indexOf('dnd') !== -1
+                        && <DoNotDisturbButton
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                        icon = { IconDoNotDisturb }
+                        // onClick = { this._onToolbarToggleRaiseHand }
+                        toggled = { _raisedHand }
+                        tooltip = { t('toolbar.raiseHand') } /> }
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />

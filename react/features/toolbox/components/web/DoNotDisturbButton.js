@@ -12,7 +12,7 @@ import type { Props as AbstractToolbarButtonProps }
 /**
  * The type of the React {@code Component} props of {@link ToolbarButton}.
  */
-export type Props = AbstractToolbarButtonProps & {
+type Props = AbstractToolbarButtonProps & {
 
     /**
      * The text to display in the tooltip.
@@ -31,7 +31,7 @@ export type Props = AbstractToolbarButtonProps & {
  *
  * @extends AbstractToolbarButton
  */
-export class ToolbarButton extends AbstractToolbarButton<Props> {
+class DoNotDisturbButton extends AbstractToolbarButton<Props> {
     /**
      * Default values for {@code ToolbarButton} component's properties.
      *
@@ -41,9 +41,26 @@ export class ToolbarButton extends AbstractToolbarButton<Props> {
         tooltipPosition: 'top'
     };
 
+    _onButtonClick = () => {
+        if(window.dnd){
+            window.dnd = false;
+        }
+        else
+        {
+            window.dnd = true;
+        }
+
+        window.APP.conference.commands.sendCommandOnce('dnd', {
+            value: window.dnd
+        });
+    };
+
     constructor(props) {
         super(props);
+
+        this._onButtonClick = this._onButtonClick.bind(this);
     }
+    
     /**
      * Renders the button of this {@code ToolbarButton}.
      *
@@ -57,7 +74,7 @@ export class ToolbarButton extends AbstractToolbarButton<Props> {
             <div
                 aria-label = { this.props.accessibilityLabel }
                 className = 'toolbox-button'
-                onClick = { this.props.onClick }>
+                onClick = { this._onButtonClick }>
                 { this.props.tooltip
                     ? <Tooltip
                         content = { this.props.tooltip }
@@ -83,4 +100,4 @@ export class ToolbarButton extends AbstractToolbarButton<Props> {
     }
 }
 
-export default ToolbarButton;
+export default DoNotDisturbButton;
