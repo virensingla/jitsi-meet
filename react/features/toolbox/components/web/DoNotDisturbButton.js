@@ -1,9 +1,13 @@
+/* eslint-disable jsdoc/check-tag-names */
+/* eslint-disable valid-jsdoc */
 /* @flow */
 
 import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { Icon } from '../../../base/icons';
+// import conference from '../../../conference';
+import { isDndActive } from '../../../dnd';
 
 import AbstractToolbarButton from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
@@ -42,17 +46,22 @@ class DoNotDisturbButton extends AbstractToolbarButton<Props> {
     };
 
     _onButtonClick = () => {
-        if(window.dnd){
+        if (window.dnd) {
             window.dnd = false;
-        }
-        else
-        {
+        } else {
             window.dnd = true;
         }
 
-        window.APP.conference.commands.sendCommandOnce('dnd', {
-            value: window.dnd
-        });
+        console.warn('is dnd active', isDndActive(window.APP.store.getState()));
+
+        window.APP.conference.commands.sendCommand(
+            'dnd',
+            {
+                attributes: {
+                    isActive: !isDndActive(window.APP.store.getState())
+                }
+            }
+        );
     };
 
     constructor(props) {
