@@ -8,10 +8,13 @@ import React from 'react';
 import { Icon } from '../../../base/icons';
 // import conference from '../../../conference';
 import { isDndActive } from '../../../dnd';
+import { muteAllParticipants } from '../../../remote-video-menu/actions';
 
-import AbstractToolbarButton from '../AbstractToolbarButton';
+import AbstractToolbarButton, { _mapStateToProps } from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of {@link ToolbarButton}.
@@ -53,6 +56,13 @@ class DoNotDisturbButton extends AbstractToolbarButton<Props> {
         }
 
         console.warn('is dnd active', isDndActive(window.APP.store.getState()));
+
+        if(!isDndActive(window.APP.store.getState())){
+            const { dispatch } = this.props;
+            console.warn('dnd muteAllParticipants 1', this.props);
+
+            dispatch(muteAllParticipants([]));
+        }
 
         window.APP.conference.commands.sendCommand(
             'dnd',
@@ -109,4 +119,4 @@ class DoNotDisturbButton extends AbstractToolbarButton<Props> {
     }
 }
 
-export default DoNotDisturbButton;
+export default translate(connect(_mapStateToProps)(DoNotDisturbButton));

@@ -7,6 +7,7 @@ import {
 } from '../base/participants';
 
 import { DND_COMMAND } from './constants';
+// import { muteLocal } from '../remote-video-menu/actions';
 
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
@@ -15,8 +16,8 @@ import { DND_COMMAND } from './constants';
  * notify all listeners.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/conference'].dndEnabled,
-    /* listener */ (newSelectedValue, store) => _sendDndCommand(newSelectedValue || 'off', store));
+    /* selector */ state => state['features/dnd'].state,
+    /* listener */ (newSelectedValue, store) => _sendDndCommand(newSelectedValue, store));
 
 /**
  * Subscribes to changes to the currently pinned participant in the user
@@ -64,11 +65,11 @@ StateListenerRegistry.register(
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-function _getFollowMeState(state) {
-    return {
-        off: true
-    };
-}
+// function _getFollowMeState(state) {
+//     return {
+//         off: true
+//     };
+// }
 
 /**
  * Sends the follow-me command, when a local property change occurs.
@@ -80,6 +81,18 @@ function _getFollowMeState(state) {
  */
 function _sendDndCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
+    console.warn('dnd StateListenerRegistry', newSelectedValue, store)
+
+    if(newSelectedValue && newSelectedValue.isActive === "true"){
+        try {
+            // store.dispatch(muteLocal(true));
+        }
+        catch(e) {
+            console.warn('dnd mute local', e);
+        }
+    }
+    
+    return;
     const state = store.getState();
     const conference = getCurrentConference(state);
 

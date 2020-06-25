@@ -10,6 +10,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { DND_COMMAND } from './constants';
 import { isDndActive } from './functions';
+// import { muteLocal } from '../remote-video-menu/actions';
 import logger from './logger';
 
 declare var APP: Object;
@@ -84,4 +85,6 @@ function _onDndCommand(attributes = {}, id, store) {
     // const oldState = state['features/dnd'].state || {};
 
     store.dispatch(setDndState(attributes));
+
+    // store.dispatch(muteLocal(true));
 }

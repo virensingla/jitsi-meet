@@ -26,7 +26,9 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
     _handleClick() {
         console.log('dnd mute click', this._isAudioMuted());
 
-        if (this._isAudioMuted() && !isDndActive(window.APP.store.getState())) {
+        console.warn('dnd is audio muted', this._isAudioMuted());
+
+        if (!isDndActive(window.APP.store.getState()) || !this._isAudioMuted()) {
             this._setAudioMuted(!this._isAudioMuted());
         }
     }
