@@ -86,7 +86,7 @@ import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
-import DoNotDisturbButton from './DoNotDisturbButton';
+//import DoNotDisturbButton from './DoNotDisturbButton';
 import { isDndActive } from '../../../dnd';
 
 /**
@@ -260,6 +260,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
         this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
+        this._onToolbarDndToggle = this._onToolbarDndToggle.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
@@ -826,6 +827,23 @@ class Toolbox extends Component<Props, State> {
         this._doToggleRaiseHand();
     }
 
+    _onToolbarDndToggle: () => void;
+
+    _onToolbarDndToggle() {
+        if(!_dndActive){
+            this.props.dispatch(muteAllParticipants([getLocalParticipant(window.APP.store.getState()).id]));
+        }
+
+        window.APP.conference.commands.sendCommand(
+            'dnd',
+            {
+                attributes: {
+                    isActive: !_dndActive
+                }
+            }
+        );
+    }
+
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -1277,10 +1295,10 @@ class Toolbox extends Component<Props, State> {
                             <ChatCounter />
                         </div> }
                     { buttonsLeft.indexOf('dnd') !== -1
-                        && <DoNotDisturbButton
+                        && <ToolbarButton
                         accessibilityLabel = { 'Toggle Do Not Disturb' }
                         icon = { IconDoNotDisturb }
-                        // onClick = { this._onToolbarToggleRaiseHand }
+                        onClick = { this._onToolbarDndToggle }
                         toggled = { _dndActive }
                         tooltip = { _dndActive ? 'Disable Do Not Disturb' : 'Enable Do Not Disturb' } /> }
                     {
