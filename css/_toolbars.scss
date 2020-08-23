@@ -225,6 +225,12 @@
             line-height: $newToolbarSize;
             margin: 0 8px;
             text-align: center;
+
+            &.dnd {
+                .toggled {
+                    background-color: #bf2117 !important;
+                }
+            }
         }
 
         .toolbar-button-with-badge {

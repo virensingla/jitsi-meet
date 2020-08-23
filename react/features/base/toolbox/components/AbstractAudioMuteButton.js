@@ -4,8 +4,8 @@ import { IconMicDisabled, IconMicrophone } from '../../icons';
 
 import AbstractButton from './AbstractButton';
 import type { Props } from './AbstractButton';
-import { isDndActive } from '../../../dnd';
-import { getLocalParticipant } from '../../../base/participants';
+// import { isDndActive } from '../../../dnd';
+// import { getLocalParticipant } from '../../../base/participants';
 
 
 /**
@@ -26,11 +26,20 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * @returns {void}
      */
     _handleClick() {
-        let isModerator = getLocalParticipant(window.APP.store.getState()).role == "moderator";
-        
-        if (isModerator || !isDndActive(window.APP.store.getState()) || !this._isAudioMuted()) {
+        if (!this._isAudioMuted() || this._canUnmute()) {
             this._setAudioMuted(!this._isAudioMuted());
         }
+    }
+
+    /**
+     * Helper function to be implemented by subclasses, which must return a
+     * boolean value indicating if audio can be unmuted.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _canUnmute() {
+        // To be implemented by subclass.
     }
 
     /**

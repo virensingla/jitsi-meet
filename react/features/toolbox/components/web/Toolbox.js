@@ -86,8 +86,8 @@ import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
-//import DoNotDisturbButton from './DoNotDisturbButton';
 import { isDndActive } from '../../../dnd';
+import { muteAllParticipants } from '../../../remote-video-menu/actions';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -830,7 +830,7 @@ class Toolbox extends Component<Props, State> {
     _onToolbarDndToggle: () => void;
 
     _onToolbarDndToggle() {
-        if(!_dndActive){
+        if(!this.props._dndActive){
             this.props.dispatch(muteAllParticipants([getLocalParticipant(window.APP.store.getState()).id]));
         }
 
@@ -838,7 +838,7 @@ class Toolbox extends Component<Props, State> {
             'dnd',
             {
                 attributes: {
-                    isActive: !_dndActive
+                    isActive: !this.props._dndActive
                 }
             }
         );
@@ -1298,6 +1298,7 @@ class Toolbox extends Component<Props, State> {
                         && <ToolbarButton
                         accessibilityLabel = { 'Toggle Do Not Disturb' }
                         icon = { IconDoNotDisturb }
+                        className = 'dnd'
                         onClick = { this._onToolbarDndToggle }
                         toggled = { _dndActive }
                         tooltip = { _dndActive ? 'Disable Do Not Disturb' : 'Enable Do Not Disturb' } /> }
