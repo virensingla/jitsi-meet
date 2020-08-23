@@ -37,7 +37,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED:
-        console.warn('viren: joined', interfaceConfig);
         VideoLayout.mucJoined();
         break;
 
@@ -47,9 +46,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
         if (!action.participant.local) {
-            console.warn('action.participant: ', action.participant);
-            console.warn('action: ', action);
-
             let addUser = true;
 
             if (interfaceConfig.SHOW_ONLY_MODERATOR === true) {
@@ -61,14 +57,10 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             }
 
-            console.warn('viren: add user', addUser);
-
             if (addUser) {
-                console.warn('viren: adding thumb');
                 VideoLayout.addRemoteParticipantContainer(
                     getParticipantById(store.getState(), action.participant.id));
             } else {
-                console.warn('viren: skipping participant');
             }
         }
         break;

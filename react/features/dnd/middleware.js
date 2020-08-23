@@ -25,11 +25,8 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
 
-        console.warn('dnd middleware registered');
-
         conference.addCommandListener(
             DND_COMMAND, ({ attributes }, id) => {
-                console.warn('dnd middleware', attributes, id);
                 _onDndCommand(attributes, id, store);
             });
         break;

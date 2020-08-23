@@ -7,7 +7,6 @@ import {
 } from '../base/participants';
 
 import { DND_COMMAND } from './constants';
-//import { muteLocal } from '../remote-video-menu/actions';
 
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
@@ -20,56 +19,12 @@ StateListenerRegistry.register(
     /* listener */ (newSelectedValue, store) => _sendDndCommand(newSelectedValue, store));
 
 /**
- * Subscribes to changes to the currently pinned participant in the user
- * interface of the local participant.
- */
-// StateListenerRegistry.register(
-//     /* selector */ state => {
-//         const pinnedParticipant = getPinnedParticipant(state);
-
-//         return pinnedParticipant ? pinnedParticipant.id : null;
-//     },
-//     /* listener */ _sendDndCommand);
-
-/**
- * Subscribes to changes to the shared document (etherpad) visibility in the
- * user interface of the local participant.
- *
- * @param sharedDocumentVisible {Boolean} {true} if the shared document was
- * shown (as a result of the toggle) or {false} if it was hidden
- */
-// StateListenerRegistry.register(
-//     /* selector */ state => state['features/etherpad'].editing,
-//     /* listener */ _sendFollowMeCommand);
-
-/**
- * Subscribes to changes to the filmstrip visibility in the user interface of
- * the local participant.
- */
-// StateListenerRegistry.register(
-//     /* selector */ state => state['features/filmstrip'].visible,
-//     /* listener */ _sendFollowMeCommand);
-
-/**
- * Subscribes to changes to the tile view setting in the user interface of the
- * local participant.
- */
-// StateListenerRegistry.register(
-//     /* selector */ state => state['features/video-layout'].tileViewEnabled,
-//     /* listener */ _sendFollowMeCommand);
-
-/**
  * Private selector for returning state from redux that should be respected by
  * other participants while follow me is enabled.
  *
  * @param {Object} state - The redux state.
  * @returns {Object}
  */
-// function _getFollowMeState(state) {
-//     return {
-//         off: true
-//     };
-// }
 
 /**
  * Sends the follow-me command, when a local property change occurs.
@@ -81,7 +36,6 @@ StateListenerRegistry.register(
  */
 function _sendDndCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
-    console.warn('dnd StateListenerRegistry', newSelectedValue, store)
 
     const state = store.getState();
 
@@ -103,34 +57,4 @@ function _sendDndCommand(
     }
     
     return;
-    
-    const conference = getCurrentConference(state);
-
-    if (!conference) {
-        return;
-    }
-
-    // Only a moderator is allowed to send commands.
-    if (!isLocalParticipantModerator(state)) {
-        return;
-    }
-
-    if (newSelectedValue === 'off') {
-        // if the change is to off, local user turned off follow me and
-        // we want to signal this
-
-        conference.sendCommandOnce(
-            DND_COMMAND,
-            { attributes: { off: true } }
-        );
-
-        return;
-    } else if (!state['features/base/conference'].dndEnabled) {
-        return;
-    }
-
-    conference.sendCommand(
-        DND_COMMAND,
-        { attributes: _getFollowMeState(state) }
-    );
 }

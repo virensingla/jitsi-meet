@@ -125,12 +125,10 @@ function _electParticipantInLargeVideo(state) {
     // 1. If a participant is pinned, they will be shown in the LargeVideo (
     //    regardless of whether they are local or remote).
     let participants = state['features/base/participants'];
-    console.warn('viren: original participants', participants)
 
     if (interfaceConfig.SHOW_ONLY_MODERATOR === true 
         && localParticipant.role !== PARTICIPANT_ROLE.MODERATOR) {
         participants = participants.filter(p => p.local || p.role === PARTICIPANT_ROLE.MODERATOR);
-        console.warn('viren: modified participants', participants)
     }
 
     let participant = participants.find(p => p.pinned);
@@ -147,12 +145,10 @@ function _electParticipantInLargeVideo(state) {
             // 3. There is no dominant speaker so select the remote participant
             //    who last had visible video.
             let tracks = state['features/base/tracks'];
-            console.warn('viren: original tracks', tracks);
 
             if (interfaceConfig.SHOW_ONLY_MODERATOR === true
                 && localParticipant.role !== PARTICIPANT_ROLE.MODERATOR) {
                 tracks = tracks.filter(t => participants.find(p => t.participantId === p.id) !== undefined);
-                console.warn('viren: modified tracks', tracks)
             }
 
             const videoTrack = _electLastVisibleRemoteVideo(tracks);
