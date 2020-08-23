@@ -9,7 +9,7 @@ var interfaceConfig = {
      * Whether or not the blurred video background for large video should be
      * displayed on browsers that can support it.
      */
-    DISABLE_VIDEO_BACKGROUND: false,
+    DISABLE_VIDEO_BACKGROUND: true,
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
@@ -208,6 +208,8 @@ var interfaceConfig = {
     * being already installed is done before rendering.
     */
     SHOW_CHROME_EXTENSION_BANNER: false,
+
+    SHOW_ONLY_MODERATOR: false,
 
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT

@@ -8,7 +8,10 @@ import {
 } from '../analytics';
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
-import { getParticipants } from '../base/participants';
+import { PARTICIPANT_ROLE,
+    getParticipants,
+    getLocalParticipant
+} from '../base/participants';
 import { reportError } from '../base/util';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -18,6 +21,7 @@ import {
 } from './actionTypes';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Signals conference to select a participant.
@@ -116,9 +120,17 @@ function _electLastVisibleRemoteVideo(tracks) {
  * @returns {(string|undefined)}
  */
 function _electParticipantInLargeVideo(state) {
+    const localParticipant = getLocalParticipant(state);
+
     // 1. If a participant is pinned, they will be shown in the LargeVideo (
     //    regardless of whether they are local or remote).
-    const participants = state['features/base/participants'];
+    let participants = state['features/base/participants'];
+
+    if (interfaceConfig.SHOW_ONLY_MODERATOR === true 
+        && localParticipant.role !== PARTICIPANT_ROLE.MODERATOR) {
+        participants = participants.filter(p => p.local || p.role === PARTICIPANT_ROLE.MODERATOR);
+    }
+
     let participant = participants.find(p => p.pinned);
     let id = participant && participant.id;
 
@@ -132,7 +144,13 @@ function _electParticipantInLargeVideo(state) {
         if (!id) {
             // 3. There is no dominant speaker so select the remote participant
             //    who last had visible video.
-            const tracks = state['features/base/tracks'];
+            let tracks = state['features/base/tracks'];
+
+            if (interfaceConfig.SHOW_ONLY_MODERATOR === true
+                && localParticipant.role !== PARTICIPANT_ROLE.MODERATOR) {
+                tracks = tracks.filter(t => participants.find(p => t.participantId === p.id) !== undefined);
+            }
+
             const videoTrack = _electLastVisibleRemoteVideo(tracks);
 
             id = videoTrack && videoTrack.participantId;

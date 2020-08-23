@@ -4,6 +4,9 @@ import { IconMicDisabled, IconMicrophone } from '../../icons';
 
 import AbstractButton from './AbstractButton';
 import type { Props } from './AbstractButton';
+import { isDndActive } from '../../../dnd';
+import { getLocalParticipant } from '../../../base/participants';
+
 
 /**
  * An abstract implementation of a button for toggling audio mute.
@@ -23,7 +26,11 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * @returns {void}
      */
     _handleClick() {
-        this._setAudioMuted(!this._isAudioMuted());
+        let isModerator = getLocalParticipant(window.APP.store.getState()).role == "moderator";
+        
+        if (isModerator || !isDndActive(window.APP.store.getState()) || !this._isAudioMuted()) {
+            this._setAudioMuted(!this._isAudioMuted());
+        }
     }
 
     /**

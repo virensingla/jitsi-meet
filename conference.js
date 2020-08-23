@@ -132,6 +132,7 @@ import { createPresenterEffect } from './react/features/stream-effects/presenter
 import { endpointMessageReceived } from './react/features/subtitles';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
+import { isDndActive } from './react/features/dnd';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 

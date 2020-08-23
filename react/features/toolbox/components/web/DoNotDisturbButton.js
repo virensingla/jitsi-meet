@@ -1,18 +1,27 @@
+/* eslint-disable jsdoc/check-tag-names */
+/* eslint-disable valid-jsdoc */
 /* @flow */
 
 import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { Icon } from '../../../base/icons';
+// import conference from '../../../conference';
+import { isDndActive } from '../../../dnd';
+import { muteAllParticipants } from '../../../remote-video-menu/actions';
 
-import AbstractToolbarButton from '../AbstractToolbarButton';
+import AbstractToolbarButton, { _mapStateToProps } from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
+import { getLocalParticipant } from '../../../base/participants';
+
 
 /**
  * The type of the React {@code Component} props of {@link ToolbarButton}.
  */
-export type Props = AbstractToolbarButtonProps & {
+type Props = AbstractToolbarButtonProps & {
 
     /**
      * The text to display in the tooltip.
@@ -31,7 +40,7 @@ export type Props = AbstractToolbarButtonProps & {
  *
  * @extends AbstractToolbarButton
  */
-export class ToolbarButton extends AbstractToolbarButton<Props> {
+class DoNotDisturbButton extends AbstractToolbarButton<Props> {
     /**
      * Default values for {@code ToolbarButton} component's properties.
      *
@@ -41,9 +50,35 @@ export class ToolbarButton extends AbstractToolbarButton<Props> {
         tooltipPosition: 'top'
     };
 
+    _onButtonClick = () => {
+        if (window.dnd) {
+            window.dnd = false;
+        } else {
+            window.dnd = true;
+        }
+
+        if(!isDndActive(window.APP.store.getState())){
+            const { dispatch } = this.props;
+            
+            dispatch(muteAllParticipants([getLocalParticipant(window.APP.store.getState()).id]));
+        }
+
+        window.APP.conference.commands.sendCommand(
+            'dnd',
+            {
+                attributes: {
+                    isActive: !isDndActive(window.APP.store.getState())
+                }
+            }
+        );
+    };
+
     constructor(props) {
         super(props);
+
+        this._onButtonClick = this._onButtonClick.bind(this);
     }
+    
     /**
      * Renders the button of this {@code ToolbarButton}.
      *
@@ -57,7 +92,7 @@ export class ToolbarButton extends AbstractToolbarButton<Props> {
             <div
                 aria-label = { this.props.accessibilityLabel }
                 className = 'toolbox-button'
-                onClick = { this.props.onClick }>
+                onClick = { this._onButtonClick }>
                 { this.props.tooltip
                     ? <Tooltip
                         content = { this.props.tooltip }
@@ -76,11 +111,11 @@ export class ToolbarButton extends AbstractToolbarButton<Props> {
      */
     _renderIcon() {
         return (
-            <div className = { `toolbox-icon ${this.props.toggled ? 'toggled' : ''}` }>
+            <div style = {{backgroundColor: this.props.toggled ? '#bf2117' : ''}} className = { `toolbox-icon ${this.props.toggled ? 'toggled' : ''}` }>
                 <Icon src = { this.props.icon } />
             </div>
         );
     }
 }
 
-export default ToolbarButton;
+export default translate(connect(_mapStateToProps)(DoNotDisturbButton));

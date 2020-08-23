@@ -14,10 +14,12 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
 
 import './middleware.any';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Middleware which intercepts actions and updates the legacy component
@@ -44,8 +46,22 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
         if (!action.participant.local) {
-            VideoLayout.addRemoteParticipantContainer(
-                getParticipantById(store.getState(), action.participant.id));
+            let addUser = true;
+
+            if (interfaceConfig.SHOW_ONLY_MODERATOR === true) {
+                addUser = action.participant.role === 'moderator';
+
+                if (!addUser) {
+                    const localParticipant = getLocalParticipant(store.getState());
+                    addUser = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+                }
+            }
+
+            if (addUser) {
+                VideoLayout.addRemoteParticipantContainer(
+                    getParticipantById(store.getState(), action.participant.id));
+            } else {
+            }
         }
         break;
 

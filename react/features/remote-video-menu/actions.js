@@ -66,6 +66,7 @@ export function muteRemote(participantId: string) {
  * @returns {Function}
  */
 export function muteAllParticipants(exclude: Array<string>) {
+    console.warn('dnd muteAllParticipants 2');
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const localId = getLocalParticipant(state).id;

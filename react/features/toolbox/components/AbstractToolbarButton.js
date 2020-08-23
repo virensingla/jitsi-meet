@@ -8,6 +8,8 @@ import { Component } from 'react';
  */
 export type Props = {
 
+    dispatch: Function,
+
     /**
      * A succinct description of what the button does. Used by accessibility
      * tools and torture tests.
@@ -93,4 +95,12 @@ export default class AbstractToolbarButton<P: Props> extends Component<P> {
     _renderButton: (React$Element<any> | null) => React$Element<any>;
 
     _renderIcon: () => React$Element<any> | null;
+
+    
+}
+
+export function _mapStateToProps(state: Object, ownProps: Props) {
+    return {
+        
+    };
 }
