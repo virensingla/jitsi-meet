@@ -7,7 +7,7 @@ import {
 } from '../base/participants';
 
 import { DND_COMMAND } from './constants';
-// import { muteLocal } from '../remote-video-menu/actions';
+//import { muteLocal } from '../remote-video-menu/actions';
 
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
@@ -83,9 +83,19 @@ function _sendDndCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
     console.warn('dnd StateListenerRegistry', newSelectedValue, store)
 
+    const state = store.getState();
+
     if(newSelectedValue && newSelectedValue.isActive === "true"){
         try {
-            // store.dispatch(muteLocal(true));
+            if (isLocalParticipantModerator(state)) {
+                return;
+            }
+
+            store.dispatch({
+                type: 'SET_AUDIO_MUTED',
+                ensureTrack: true,
+                muted: true
+            });
         }
         catch(e) {
             console.warn('dnd mute local', e);
@@ -93,7 +103,7 @@ function _sendDndCommand(
     }
     
     return;
-    const state = store.getState();
+    
     const conference = getCurrentConference(state);
 
     if (!conference) {

@@ -15,6 +15,8 @@ import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { getLocalParticipant } from '../../../base/participants';
+
 
 /**
  * The type of the React {@code Component} props of {@link ToolbarButton}.
@@ -55,13 +57,10 @@ class DoNotDisturbButton extends AbstractToolbarButton<Props> {
             window.dnd = true;
         }
 
-        console.warn('is dnd active', isDndActive(window.APP.store.getState()));
-
         if(!isDndActive(window.APP.store.getState())){
             const { dispatch } = this.props;
-            console.warn('dnd muteAllParticipants 1', this.props);
-
-            dispatch(muteAllParticipants([]));
+            
+            dispatch(muteAllParticipants([getLocalParticipant(window.APP.store.getState()).id]));
         }
 
         window.APP.conference.commands.sendCommand(
@@ -112,7 +111,7 @@ class DoNotDisturbButton extends AbstractToolbarButton<Props> {
      */
     _renderIcon() {
         return (
-            <div className = { `toolbox-icon ${this.props.toggled ? 'toggled' : ''}` }>
+            <div style = {{backgroundColor: this.props.toggled ? '#bf2117' : ''}} className = { `toolbox-icon ${this.props.toggled ? 'toggled' : ''}` }>
                 <Icon src = { this.props.icon } />
             </div>
         );
