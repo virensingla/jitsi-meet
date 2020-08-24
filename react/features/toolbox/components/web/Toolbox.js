@@ -87,7 +87,7 @@ import {
     ClosedCaptionButton
 } from '../../../subtitles';
 import { isDndActive } from '../../../dnd';
-import { muteAllParticipants } from '../../../remote-video-menu/actions';
+import DndDialog from './DndDialog';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -830,18 +830,18 @@ class Toolbox extends Component<Props, State> {
     _onToolbarDndToggle: () => void;
 
     _onToolbarDndToggle() {
-        if(!this.props._dndActive){
-            this.props.dispatch(muteAllParticipants([getLocalParticipant(window.APP.store.getState()).id]));
-        }
-
-        window.APP.conference.commands.sendCommand(
-            'dnd',
-            {
-                attributes: {
-                    isActive: !this.props._dndActive
+        if (!this.props._dndActive) {
+            this.props.dispatch(openDialog(DndDialog, {}));
+        } else {
+            window.APP.conference.commands.sendCommand(
+                'dnd',
+                {
+                    attributes: {
+                        isActive: !this.props._dndActive
+                    }
                 }
-            }
-        );
+            );
+        }
     }
 
     _onToolbarToggleScreenshare: () => void;
