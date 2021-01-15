@@ -13,6 +13,8 @@ import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
 import { muteLocal } from '../../remote-video-menu/actions';
+import { isDndActive } from '../../dnd';
+import { isLocalParticipantModerator } from '../../base/participants';
 
 declare var APP: Object;
 
@@ -84,6 +86,17 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     componentWillUnmount() {
         typeof APP === 'undefined'
             || APP.keyboardshortcut.unregisterShortcut('M');
+    }
+
+    /**
+     * Indicates if audio can be unmuted.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _canUnmute() {
+        return isLocalParticipantModerator(window.APP.store.getState()) || !isDndActive(window.APP.store.getState());
     }
 
     /**

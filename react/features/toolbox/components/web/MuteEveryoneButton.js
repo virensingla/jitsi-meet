@@ -9,7 +9,7 @@ import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
 import { MuteEveryoneDialog } from '../../../remote-video-menu';
 
-type Props = AbstractButtonProps & {
+type Props = {
 
     /**
      * The Redux dispatch function.

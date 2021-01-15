@@ -23,7 +23,19 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * @returns {void}
      */
     _handleClick() {
-        this._setAudioMuted(!this._isAudioMuted());
+        if (!this._isAudioMuted() || this._canUnmute()) {
+            this._setAudioMuted(!this._isAudioMuted());
+        }
+    }
+    /**
+     * Helper function to be implemented by subclasses, which must return a
+     * boolean value indicating if audio can be unmuted.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _canUnmute() {
+        // To be implemented by subclass.
     }
 
     /**

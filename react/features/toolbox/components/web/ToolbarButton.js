@@ -15,6 +15,11 @@ import type { Props as AbstractToolbarButtonProps }
 type Props = AbstractToolbarButtonProps & {
 
     /**
+     * Additional css class name.
+     */
+    className: string,
+
+    /**
      * The text to display in the tooltip.
      */
     tooltip: string,
@@ -41,6 +46,10 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
         tooltipPosition: 'top'
     };
 
+    constructor(props) {
+        super(props);
+    }
+
     /**
      * Renders the button of this {@code ToolbarButton}.
      *
@@ -53,7 +62,7 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
         return (
             <div
                 aria-label = { this.props.accessibilityLabel }
-                className = 'toolbox-button'
+                className = { `toolbox-button ${this.props.toggled ? this.props.className : ''}` }
                 onClick = { this.props.onClick }>
                 { this.props.tooltip
                     ? <Tooltip

@@ -19,6 +19,7 @@ import {
     IconOpenInNew,
     IconPresentation,
     IconRaisedHand,
+    IconDoNotDisturb,
     IconRec,
     IconShareDesktop,
     IconShareVideo
@@ -85,6 +86,8 @@ import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import { isDndActive } from '../../../dnd';
+import DndDialog from './DndDialog';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -144,6 +147,11 @@ type Props = {
     _isGuest: boolean,
 
     /**
+     * Whether or not the current user is moderator.
+     */
+    _isModerator: boolean,
+
+    /**
      * The ID of the local participant.
      */
     _localParticipantID: String,
@@ -162,6 +170,11 @@ type Props = {
      * Whether or not the local participant's hand is raised.
      */
     _raisedHand: boolean,
+
+    /**
+     * Whether or not moderator has activated dnd.
+     */
+    _dndActive: boolean,
 
     /**
      * Whether or not the local participant is screensharing.
@@ -247,6 +260,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
         this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
+        this._onToolbarDndToggle = this._onToolbarDndToggle.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
@@ -813,6 +827,23 @@ class Toolbox extends Component<Props, State> {
         this._doToggleRaiseHand();
     }
 
+    _onToolbarDndToggle: () => void;
+
+    _onToolbarDndToggle() {
+        if (!this.props._dndActive) {
+            this.props.dispatch(openDialog(DndDialog, {}));
+        } else {
+            window.APP.conference.commands.sendCommand(
+                'dnd',
+                {
+                    attributes: {
+                        isActive: !this.props._dndActive
+                    }
+                }
+            );
+        }
+    }
+
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -1158,7 +1189,8 @@ class Toolbox extends Component<Props, State> {
             _hideInviteButton,
             _overflowMenuVisible,
             _raisedHand,
-            t
+            t,
+            _dndActive
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
@@ -1185,6 +1217,9 @@ class Toolbox extends Component<Props, State> {
         }
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
+        }
+        if(this.props._isModerator){
+            buttonsLeft.push('dnd');
         }
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
@@ -1259,6 +1294,14 @@ class Toolbox extends Component<Props, State> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
+                    { buttonsLeft.indexOf('dnd') !== -1
+                        && <ToolbarButton
+                        accessibilityLabel = { 'Toggle Do Not Disturb' }
+                        icon = { IconDoNotDisturb }
+                        className = 'dnd'
+                        onClick = { this._onToolbarDndToggle }
+                        toggled = { _dndActive }
+                        tooltip = { _dndActive ? 'Disable Do Not Disturb' : 'Enable Do Not Disturb' } /> }
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
@@ -1379,12 +1422,14 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
+        _isModerator: localParticipant.role == "moderator",
         _fullScreen: fullScreen,
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
+        _dndActive: isDndActive(state),
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
