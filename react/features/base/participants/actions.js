@@ -13,7 +13,8 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    CHECK_DUPLICATE_PARTICIPANTS
 } from './actionTypes';
 import {
     getLocalParticipant,
@@ -478,3 +479,16 @@ export function setLoadableAvatarUrl(participantId, url) {
         }
     };
 }
+
+/**
+ * Creates an action which notifies the app to check if any user has joined twice.
+ *
+ * @returns {{
+    *     type: CHECK_DUPLICATE_PARTICIPANTS
+    * }}
+   */
+   export function checkDuplicateParticipants() {
+       return {
+           type: CHECK_DUPLICATE_PARTICIPANTS
+       };
+   }

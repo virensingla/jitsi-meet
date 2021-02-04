@@ -8,7 +8,8 @@ import {
     hiddenParticipantJoined,
     hiddenParticipantLeft,
     participantJoined,
-    participantLeft
+    participantLeft,
+    checkDuplicateParticipants
 } from '../participants';
 import { toState } from '../redux';
 import { safeDecodeURIComponent } from '../util';
@@ -82,6 +83,8 @@ export function commonUserJoinedHandling(
             role: user.getRole()
         }));
     }
+
+    dispatch(checkDuplicateParticipants());
 }
 
 /**
@@ -361,6 +364,14 @@ export function sendLocalParticipant(
     }
 
     conference.setDisplayName(name);
+}
+
+/**
+ * Logic shared between web and RN to check if any user has joined twice
+ * @returns {void}
+ */
+export function commonCheckDuplicateParticipants({dispatch}) {
+    dispatch(checkDuplicateParticipants());
 }
 
 /**

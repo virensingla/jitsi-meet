@@ -1,5 +1,6 @@
 // @flow
 
+import { constant } from 'lodash';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
@@ -16,14 +17,17 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
+    kickParticipant,
     localParticipantIdChanged,
     localParticipantJoined,
     localParticipantLeft,
+    muteRemoteParticipant,
     participantLeft,
     participantUpdated,
     setLoadableAvatarUrl
 } from './actions';
 import {
+    CHECK_DUPLICATE_PARTICIPANTS,
     DOMINANT_SPEAKER_CHANGED,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
@@ -42,7 +46,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getParticipants
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -128,6 +133,38 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);
+
+    case CHECK_DUPLICATE_PARTICIPANTS:
+        const joiningConference = store.getState()['features/base/conference'].joining;
+
+        //User hasn't joined the conf yet
+        if(joiningConference)
+            break;
+
+        const localParticipant = getLocalParticipant(store.getState());
+
+        if(localParticipant.role != "moderator")
+            break;
+
+        const otherParticipants = getParticipants(store.getState()).filter((u) => u.id != localParticipant.id && !u.local && u.role == "participant" && u.name);
+        
+        const groupedDuplicateParticipants = otherParticipants.reduce(function(rv, x) {
+            (rv[x['name']] = rv[x['name']] || []).push(x);
+            return rv;
+          }, {});
+
+        for(var key in groupedDuplicateParticipants) {
+            let groupSize = groupedDuplicateParticipants[key].length;
+
+            if(groupSize > 1) {
+                for(let x = 0; x < groupSize - 1; x++){
+                    let duplicateUser = groupedDuplicateParticipants[key][x];
+                    store.dispatch(kickParticipant(duplicateUser.id));
+                }
+            }
+        }
+
+        break;
     }
 
     return next(action);

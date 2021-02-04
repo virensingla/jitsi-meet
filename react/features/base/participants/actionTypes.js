@@ -148,3 +148,11 @@ export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
  */
 export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
 
+/**
+ * Action to check if any user has joined twice
+ *
+ * {
+ *     type: CHECK_DUPLICATE_PARTICIPANTS
+ * }
+ */
+export const CHECK_DUPLICATE_PARTICIPANTS = 'CHECK_DUPLICATE_PARTICIPANTS';

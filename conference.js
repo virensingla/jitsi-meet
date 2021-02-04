@@ -50,7 +50,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    setDesktopSharingEnabled
+    setDesktopSharingEnabled,
+    commonCheckDuplicateParticipants
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -1950,6 +1951,7 @@ export default {
         // add local streams when joined to the conference
         room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
             this._onConferenceJoined();
+            commonCheckDuplicateParticipants(APP.store);
         });
 
         room.on(
